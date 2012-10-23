@@ -4,6 +4,9 @@
 (global-font-lock-mode 1) 
 (show-paren-mode 1)
 
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "chromium")
+
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 (require 'package) 
@@ -25,11 +28,15 @@
 
 (require 'cl)
 
+(ido-mode)
+
 ;color theme
 (add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0")
 (require 'color-theme)
 (color-theme-initialize)
 (color-theme-charcoal-black)
+
+
 
 ;;acutex
 (load "auctex.el" nil t t)
@@ -42,38 +49,14 @@
   (paredit-mode 1)
   (rainbow-delimiters-mode 1))
 
+(defun override-slime-repl-bindings-with-paredit ()
+  (define-key slime-repl-mode-map
+    (read-kbd-macro paredit-backward-delete-key) nil))
+
 (defun standard-lisp-setup ()
   (lisp-setup) (pretty-lambda-mode))
 
 (add-hook 'clojure-mode-hook #'lisp-setup)
-;;; all code in this function lifted from the clojure-mode function
-;;; from clojure-mode.el
-
-;; (defun clojure-font-lock-setup ()
-;;   (interactive)
-;;   (set (make-local-variable 'lisp-indent-function)
-;;        'clojure-indent-function)
-;;   (set (make-local-variable 'lisp-doc-string-elt-property)
-;;        'clojure-doc-string-elt)
-;;   (set (make-local-variable 'font-lock-multiline) t)
-;;   (add-to-list 'font-lock-extend-region-functions
-;;                'clojure-font-lock-extend-region-def t)
-;;   (when clojure-mode-font-lock-comment-sexp
-;;     (add-to-list 'font-lock-extend-region-functions
-;;                  'clojure-font-lock-extend-region-comment t)
-;;     (make-local-variable 'clojure-font-lock-keywords)
-;;     (add-to-list 'clojure-font-lock-keywords
-;;                  'clojure-font-lock-mark-comment t)
-;;     (set (make-local-variable 'open-paren-in-column-0-is-defun-start) nil))
-;;   (setq font-lock-defaults
-;;         '(clojure-font-lock-keywords    ; keywords
-;;           nil nil
-;;           (("+-*/.<>=!?$%_&~^:@" . "w")) ; syntax alist
-;;           nil
-;;           (font-lock-mark-block-function . mark-defun)
-;;           (font-lock-syntactic-face-function
-;;            . lisp-font-lock-syntactic-face-function))))
-
 
 ;;lisp 
 (defun slimify ()
@@ -85,18 +68,19 @@
 	  (ecl ("ecl"))))
   (slime-setup '(slime-fancy))
   (add-hook 'slime-mode-hook #'standard-lisp-setup)
-  (add-hook 'slime-repl-mode-hook #'lisp-setup))
+  (add-hook 'slime-repl-mode-hook #'lisp-setup)
+  (add-hook 'slime-repl-mode-hook #'override-slime-repl-bindings-with-paredit))
 
 (add-hook 'emacs-lisp-mode-hook #'standard-lisp-setup)
 
 
 ;;maxima
- (add-to-list 'load-path "/usr/share/maxima/5.27.0/emacs/")
- (autoload 'maxima-mode "maxima" "Maxima mode" t)
- (autoload 'imaxima "imaxima" "Frontend for maxima with Image support" t)
- (autoload 'maxima "maxima" "Maxima interaction" t)
- (autoload 'imath-mode "imath" "Imath mode for math formula input" t)
- (setq imaxima-use-maxima-mode-flag t)
+(add-to-list 'load-path "/usr/share/maxima/branch_5_27_base_203_gfa3e9d0/emacs/")
+(autoload 'maxima-mode "maxima" "Maxima mode" t)
+(autoload 'imaxima "imaxima" "Frontend for maxima with Image support" t)
+(autoload 'maxima "maxima" "Maxima interaction" t)
+(autoload 'imath-mode "imath" "Imath mode for math formula input" t)
+(setq imaxima-use-maxima-mode-flag t)
 
 ;;Org Mode
 (require 'org-install)
@@ -123,6 +107,17 @@
 	 (:connection-type . ssl))))
 
 
+;;Gnus
+(setq gnus-select-method '(nnimap "gmail"
+				  (nnimap-address "imap.gmail.com")
+				  (nnimap-server-port 993)
+				  (nnimap-stream ssl)))
+(setq message-send-mail-function 'smtpmail-send-it
+      smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
+      smtpmail-auth-credentials '(("smtp.gmail.com" 587 "brianlevy95@gmail.com" nil))
+      smtpmail-default-smtp-server "smtp.gmail.com"
+      smtpmail-smtp-server "smtp.gmail.com"
+      smtpmail-smtp-service 587)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -138,3 +133,6 @@
  ;; If there is more than one, they won't work right.
  )
 
+
+
+(put 'downcase-region 'disabled nil)
