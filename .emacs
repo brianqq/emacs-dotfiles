@@ -1,11 +1,14 @@
-(set-face-attribute 'default nil 
-		    :font "Inconsolata" :height 95)
+(require 'cl)
+
+(when window-system
+  (set-face-attribute 'default nil 
+		    :font "Inconsolata" :height 95))
 
 (global-font-lock-mode 1) 
 (show-paren-mode 1)
 
 (setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "chromium")
+      browse-url-generic-program "conkeror")
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
@@ -25,8 +28,7 @@
      (when (not (frame-parameter nil 'fullscreen)) 'fullboth))))
 (global-set-key [f11] 'toggle-fullscreen)
 
-
-(require 'cl)
+(setq initial-scratch-message nil)
 
 (ido-mode)
 
@@ -36,11 +38,7 @@
 (color-theme-initialize)
 (color-theme-charcoal-black)
 
-
-
-;;acutex
-(load "auctex.el" nil t t)
-(load "preview-latex.el" nil t t)
+;;auctex
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
 
@@ -54,19 +52,31 @@
     (read-kbd-macro paredit-backward-delete-key) nil))
 
 (defun standard-lisp-setup ()
-  (lisp-setup) (pretty-lambda-mode))
+  (lisp-setup) (pretty-lambda-mode) (paredit-mode 1))
 
 (add-hook 'clojure-mode-hook #'lisp-setup)
 
-;;lisp 
+(defun cljify ()
+  (interactive)
+  (add-hook 'slime-repl-mode-hook
+          (defun clojure-mode-slime-font-lock ()
+            (require 'clojure-mode)
+	    (lisp-setup)
+            (let (font-lock-mode)
+              (clojure-mode-font-lock-setup)))))
+
+;;lisp
 (defun slimify ()
   (interactive)
   (require 'slime)
   (setq slime-lisp-implementations
 	'((sbcl ("sbcl") :coding-system utf-8-unix)
 	  (ccl ("ccl64"))
-	  (ecl ("ecl"))))
+	  (ecl ("ecl"))
+	  (abcl ("abcl"))))
   (slime-setup '(slime-fancy))
+  (setq common-lisp-hyperspec-root "file:///usr/share/doc/HyperSpec/"
+	slime-complete-symbol-function 'slime-fuzzy-complete-symbol)
   (add-hook 'slime-mode-hook #'standard-lisp-setup)
   (add-hook 'slime-repl-mode-hook #'lisp-setup)
   (add-hook 'slime-repl-mode-hook #'override-slime-repl-bindings-with-paredit))
@@ -74,8 +84,8 @@
 (add-hook 'emacs-lisp-mode-hook #'standard-lisp-setup)
 
 
-;;maxima
-(add-to-list 'load-path "/usr/share/maxima/branch_5_27_base_203_gfa3e9d0/emacs/")
+;maxima
+(add-to-list 'load-path "/usr/share/maxima/5.28.0/emacs/")
 (autoload 'maxima-mode "maxima" "Maxima mode" t)
 (autoload 'imaxima "imaxima" "Frontend for maxima with Image support" t)
 (autoload 'maxima "maxima" "Maxima interaction" t)
@@ -107,6 +117,10 @@
 	 (:connection-type . ssl))))
 
 
+;;Twitter
+(add-to-list 'load-path "~/.emacs.d/twittering-mode")
+(require 'twittering-mode)
+
 ;;Gnus
 (setq gnus-select-method '(nnimap "gmail"
 				  (nnimap-address "imap.gmail.com")
@@ -133,6 +147,14 @@
  ;; If there is more than one, they won't work right.
  )
 
-
-
 (put 'downcase-region 'disabled nil)
+
+;;auto-complete
+(add-to-list 'load-path "~/.emacs.d/elpa/popup-0.5")
+(add-to-list 'load-path "~/.emacs.d/elpa/auto-complete-1.4")
+(require 'auto-complete)
+(global-auto-complete-mode t)
+(define-key ac-complete-mode-map "\C-n" 'ac-next)
+(define-key ac-complete-mode-map "\C-p" 'ac-previous)
+(define-key ac-complete-mode-map "\t" 'ac-complete)
+(define-key ac-complete-mode-map "\r" nil)
