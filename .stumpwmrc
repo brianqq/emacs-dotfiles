@@ -1,0 +1,35 @@
+(require 'swank)
+(swank:create-server)
+
+(ql:quickload 'trivial-shell)
+
+(defcommand conkeror () ()
+  "Start Conkeror unless it is already running, in which case focus it."
+  (run-or-raise "conkeror" '(:class "Conkeror")))
+
+(defcommand emacsclient () ()
+  "Open an instance of emacs client "
+  (run-or-raise "emacsclient -a \"\" -c" '(:class "Emacs")))
+
+(define-key *root-map* (kbd "C-c") "exec xfce4-terminal")
+(define-key *root-map* (kbd "c") "conkeror")
+(define-key *root-map* (kbd "e") "emacsclient")
+
+(defcommand battery () ()
+  (message 
+   (trivial-shell:shell-command "acpi")))
+
+(define-key *root-map* (kbd "z") "battery")
+
+(defmacro aif (test truefm &optional falsefm)
+  `(let ((it ,test))
+     (if it
+	 ,truefm
+	 ,falsefm)))
+
+(defvar *background-image-path* "~/Pictures/spencerisawesome.jpg") ;;; it's true 
+(defun display-background ()
+  (aif *background-image-path*
+      (run-shell-command (concatenate 'string "display -backdrop -window root "
+				      it))))
+(display-background)

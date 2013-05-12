@@ -1,8 +1,6 @@
 (require 'cl)
 
-(when window-system
-  (set-face-attribute 'default nil 
-		    :font "Inconsolata" :height 95))
+(add-to-list 'default-frame-alist '(font . "Inconsolata-10"))
 
 (global-font-lock-mode 1) 
 (show-paren-mode 1)
@@ -14,6 +12,7 @@
 
 (require 'package) 
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
+(add-to-list 'package-archives '("MELPA" . "http://melpa.milkbox.net/packages/") t)
 
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
@@ -158,3 +157,21 @@
 (define-key ac-complete-mode-map "\C-p" 'ac-previous)
 (define-key ac-complete-mode-map "\t" 'ac-complete)
 (define-key ac-complete-mode-map "\r" nil)
+(put 'dired-find-alternate-file 'disabled nil)
+
+
+;;emacs-eclim
+(require 'eclimd)
+(global-eclim-mode)
+(setq help-at-pt-display-when-idle t)
+(setq help-at-pt-timer-delay 0.1)
+(help-at-pt-set-timer)
+;; regular auto-complete initialization
+;; add the emacs-eclim source
+(require 'ac-emacs-eclim-source)
+(ac-emacs-eclim-config)
+
+
+;;geiser
+(add-hook 'scheme-mode-hook #'standard-lisp-setup)
+(add-hook 'geiser-repl-mode-hook #'lisp-setup)

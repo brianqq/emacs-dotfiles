@@ -1,4 +1,12 @@
-((("trivial-shell:shell-command" .
+((("from" .
+   [1 0 0 0])
+  ("something" .
+   [1 0 0 0 0 0 0 0 0])
+  ("possibly" .
+   [1 0 0 0 0 0 0 0])
+  ("poems" .
+   [1 0 0 0 0])
+  ("trivial-shell:shell-command" .
    [0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
   ("quicklisp-quickstart:install" .
    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0])
