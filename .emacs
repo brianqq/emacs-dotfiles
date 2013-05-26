@@ -1,3 +1,5 @@
+(setq debug-on-error t)
+
 (require 'cl)
 
 (add-to-list 'default-frame-alist '(font . "Inconsolata-10"))
@@ -30,6 +32,8 @@
 (setq initial-scratch-message nil)
 
 (ido-mode)
+
+
 
 ;color theme
 (add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0")
@@ -80,7 +84,7 @@
   (add-hook 'slime-repl-mode-hook #'lisp-setup)
   (add-hook 'slime-repl-mode-hook #'override-slime-repl-bindings-with-paredit))
 
-(add-hook 'emacs-lisp-mode-hook #'standard-lisp-setup)
+(add-hook 'emacs-lisp-mode-hook 'standard-lisp-setup)
 
 
 ;maxima
@@ -161,17 +165,43 @@
 
 
 ;;emacs-eclim
-(require 'eclimd)
-(global-eclim-mode)
-(setq help-at-pt-display-when-idle t)
-(setq help-at-pt-timer-delay 0.1)
-(help-at-pt-set-timer)
+;; this is for eclipse interraction i broke it somehow w/e 
+;(require 'eclimd)
+;(global-eclim-mode)
+;(setq help-at-pt-display-when-idle t)
+;(setq help-at-pt-timer-delay 0.1)
+;(help-at-pt-set-timer)
 ;; regular auto-complete initialization
 ;; add the emacs-eclim source
-(require 'ac-emacs-eclim-source)
-(ac-emacs-eclim-config)
-
+;(require 'ac-emacs-eclim-source)
+;(ac-emacs-eclim-config)
 
 ;;geiser
-(add-hook 'scheme-mode-hook #'standard-lisp-setup)
-(add-hook 'geiser-repl-mode-hook #'lisp-setup)
+(add-hook 'scheme-mode-hook 'standard-lisp-setup)
+(add-hook 'geiser-repl-mode-hook 'lisp-setup)
+
+;;powerline
+(add-hook 'before-make-frame-hook 'powerline-center-theme)
+
+;;haskell ass shit
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+
+;; hslint on the command line only likes this indentation mode;
+;; alternatives commented out below.
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+;;(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+;;(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
+
+;; Ignore compiled Haskell files in filename completions
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+
+;; hslint on the command line only likes this indentation mode;
+;; alternatives commented out below.
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+;;(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+;;(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
+
+;; Ignore compiled Haskell files in filename completions
+(add-to-list 'completion-ignored-extensions ".hi")
+
+(add-to-list 'after-init-hook (lambda () (require 'switch-window)))
