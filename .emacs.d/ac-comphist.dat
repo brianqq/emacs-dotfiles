@@ -1,28 +1,32 @@
-((("from" .
+((("when" .
    [1 0 0 0])
-  ("something" .
-   [1 0 0 0 0 0 0 0 0])
-  ("possibly" .
-   [1 0 0 0 0 0 0 0])
-  ("poems" .
-   [1 0 0 0 0])
-  ("trivial-shell:shell-command" .
-   [0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
-  ("quicklisp-quickstart:install" .
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0])
-  ("paredit-mode" .
-   [1 0 0 0 0 0 0 0 0 0 0 0])
-  ("def" .
-   [0 0 1])
-  ("slime-complete-symbol-function" .
-   [0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
-  ("fuzzy" .
-   [0 0 0 1 0])
-  ("require" .
-   [1 0 0 0 0 0 0])
-  ("auto-complete" .
-   [0 0 0 0 0 0 0 0 0 0 0 0 1])
   ("window-system" .
    [2 0 0 0 0 0 0 0 0 0 0 0 0])
-  ("when" .
+  ("auto-complete" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 1])
+  ("require" .
+   [1 0 0 0 0 1 0])
+  ("fuzzy" .
+   [0 0 0 1 0])
+  ("slime-complete-symbol-function" .
+   [0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("def" .
+   [0 0 1])
+  ("paredit-mode" .
+   [1 0 0 0 0 0 0 0 0 0 0 0])
+  ("quicklisp-quickstart:install" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("trivial-shell:shell-command" .
+   [0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("poems" .
+   [1 0 0 0 0])
+  ("possibly" .
+   [1 0 0 0 0 0 0 0])
+  ("something" .
+   [1 0 0 0 0 0 0 0 0])
+  ("from" .
+   [1 0 0 0])
+  ("add-hook" .
+   [1 0 0 0 0 0 0 0])
+  ("setq" .
    [1 0 0 0])))
