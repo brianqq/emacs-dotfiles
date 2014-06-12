@@ -2,7 +2,8 @@
 
 (require 'cl)
 
-(add-to-list 'default-frame-alist '(font . "Inconsolata-10"))
+(add-to-list 'default-frame-alist '(font . "Inconsolata-11"))
+
 
 (global-font-lock-mode 1) 
 (show-paren-mode 1)
@@ -31,15 +32,18 @@
 
 (setq initial-scratch-message nil)
 
-(ido-mode)
+(ido-mode 1)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(TeX-command-list (quote (("TeX" "%(PDF)%(tex) %`%S%(PDFout)%(mode)%' %t" TeX-run-TeX nil (plain-tex-mode texinfo-mode ams-tex-mode) :help "Run plain TeX") ("LaTeX" "%`%l%(mode)%' %t" TeX-run-TeX nil (latex-mode doctex-mode) :help "Run LaTeX") ("Makeinfo" "makeinfo %t" TeX-run-compile nil (texinfo-mode) :help "Run Makeinfo with Info output") ("Makeinfo HTML" "makeinfo --html %t" TeX-run-compile nil (texinfo-mode) :help "Run Makeinfo with HTML output") ("AmSTeX" "%(PDF)amstex %`%S%(PDFout)%(mode)%' %t" TeX-run-TeX nil (ams-tex-mode) :help "Run AMSTeX") ("ConTeXt" "texexec --once --texutil %(execopts)%t" TeX-run-TeX nil (context-mode) :help "Run ConTeXt once") ("ConTeXt Full" "texexec %(execopts)%t" TeX-run-TeX nil (context-mode) :help "Run ConTeXt until completion") ("BibTeX" "bibtex %s" TeX-run-BibTeX nil t :help "Run BibTeX") ("Biber" "biber %s" TeX-run-Biber nil t :help "Run Biber") ("View" "%V" TeX-run-discard-or-function t t :help "Run Viewer") ("Print" "%p" TeX-run-command t t :help "Print the file") ("Queue" "%q" TeX-run-background nil t :help "View the printer queue" :visible TeX-queue-command) ("File" "%(o?)dvips %d -o %f " TeX-run-command t t :help "Generate PostScript file") ("Index" "makeindex %s" TeX-run-command nil t :help "Create index file") ("Check" "lacheck %s" TeX-run-compile nil (latex-mode) :help "Check LaTeX file for correctness") ("Spell" "(TeX-ispell-document \"\")" TeX-run-function nil t :help "Spell-check the document") ("Clean" "TeX-clean" TeX-run-function nil t :help "Delete generated intermediate files") ("Clean All" "(TeX-clean t)" TeX-run-function nil t :help "Delete generated intermediate and output files") ("Other" "" TeX-run-command t t :help "Run an arbitrary command") ("latexmk" "latexmk %l -pdf " TeX-run-command nil t))))
+ '(fuel-listener-factor-binary "/usr/lib/factor/factor")
+ '(fuel-listener-factor-image "/usr/lib/factor/factor.image")
+ '(inhibit-startup-screen t)
+ '(safe-local-variable-values (quote ((Package . CL-PPCRE) (Base . 10) (Package . CL-USER) (Syntax . COMMON-LISP)))))
 
-
-
-;color theme
-(add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0")
-(require 'color-theme)
-(color-theme-initialize)
-(color-theme-charcoal-black)
 
 ;;auctex
 (setq TeX-auto-save t)
@@ -50,6 +54,7 @@
   (paredit-mode 1)
   (rainbow-delimiters-mode 1))
 
+
 (defun override-slime-repl-bindings-with-paredit ()
   (define-key slime-repl-mode-map
     (read-kbd-macro paredit-backward-delete-key) nil))
@@ -59,41 +64,22 @@
 
 (add-hook 'clojure-mode-hook #'lisp-setup)
 
-(defun cljify ()
-  (interactive)
-  (add-hook 'slime-repl-mode-hook
-          (defun clojure-mode-slime-font-lock ()
-            (require 'clojure-mode)
-	    (lisp-setup)
-            (let (font-lock-mode)
-              (clojure-mode-font-lock-setup)))))
-
 ;;lisp
-(defun slimify ()
-  (interactive)
-  (require 'slime)
-  (setq slime-lisp-implementations
-	'((sbcl ("sbcl") :coding-system utf-8-unix)
-	  (ccl ("ccl64"))
-	  (ecl ("ecl"))
-	  (abcl ("abcl"))))
-  (slime-setup '(slime-fancy))
-  (setq common-lisp-hyperspec-root "file:///usr/share/doc/HyperSpec/"
-	slime-complete-symbol-function 'slime-fuzzy-complete-symbol)
-  (add-hook 'slime-mode-hook #'standard-lisp-setup)
-  (add-hook 'slime-repl-mode-hook #'lisp-setup)
-  (add-hook 'slime-repl-mode-hook #'override-slime-repl-bindings-with-paredit))
+(require 'slime)
+(setq slime-lisp-implementations
+      '((sbcl ("sbcl") :coding-system utf-8-unix)
+	(sbcl-build ("~/sbcl/run-sbcl.sh") :coding-system utf-8-unix)
+	(ccl ("ccl64"))
+	(ecl ("ecl"))
+	(abcl ("abcl"))))
+(slime-setup '(slime-fancy))
+(setq common-lisp-hyperspec-root "file:///usr/share/doc/HyperSpec/"
+      slime-complete-symbol-function 'slime-fuzzy-complete-symbol)
+(add-hook 'slime-mode-hook #'standard-lisp-setup)
+(add-hook 'slime-repl-mode-hook #'lisp-setup)
+(add-hook 'slime-repl-mode-hook #'override-slime-repl-bindings-with-paredit)
 
 (add-hook 'emacs-lisp-mode-hook 'standard-lisp-setup)
-
-
-;maxima
-(add-to-list 'load-path "/usr/share/maxima/5.28.0/emacs/")
-(autoload 'maxima-mode "maxima" "Maxima mode" t)
-(autoload 'imaxima "imaxima" "Frontend for maxima with Image support" t)
-(autoload 'maxima "maxima" "Maxima interaction" t)
-(autoload 'imath-mode "imath" "Imath mode for math formula input" t)
-(setq imaxima-use-maxima-mode-flag t)
 
 ;;Org Mode
 (require 'org-install)
@@ -101,107 +87,108 @@
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 (setq org-log-done t)
+(setq org-catch-invisible-edits 'smart)
+(setq org-directory "~/Dropbox/todo")
+(setq org-mobile-inbox-for-pull "~/Dropbox/todo/flagged.org")
+(setq org-mobile-directory "~/Dropbox/MobileOrg")
+(setq org-agenda-files '("~/Dropbox/todo/syllabi.org" "~/Dropbox/todo/tasklist.org"))
+(setq org-default-notes-file (concat org-directory "/notes.org"))
+(define-key global-map "\C-cc" 'org-capture)
+(setq org-src-fontify-natively t)
+(unless (boundp 'org-export-latex-classes)
+  (setq org-export-latex-classes nil))
+(add-to-list 'org-export-latex-classes
+             '("article"
+               "\\documentclass{article}"
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+(setq org-todo-keywords
+      '((sequence "TODO" "STARTED" "|" "DONE")
+	(sequence "|" "CANCELLED")))
+(setq org-todo-keyword-faces
+      '(("STARTED" . "yellow")
+	("CANCELED" . (:foreground "blue" :weight bold))))
+(setq org-export-latex-listings 'minted)
+(unless (boundp 'org-export-latex-packages-alist)
+  (setq org-export-latex-packages-alist nil))
+(add-to-list 'org-export-latex-packages-alist '("" "minted"))
+(add-hook 'org-mode-hook (lambda () (require 'ob-latex)))
+;;;open pdfs with evince
+(eval-after-load "org"
+  '(progn
+     ;; Change .pdf association directly within the alist
+     (setcdr (assoc "\\.pdf\\'" org-file-apps) "evince %s")))
 
-;;chrome editing
-(add-to-list 'load-path "~/.emacs.d")
-(require 'edit-server)
-(edit-server-start)
 
-;(require 'ibus)
-;(add-hook 'after-init-hook 'ibus-mode-on)
-
-;;Jabber
-(setq jabber-account-list
-      '(("brianlevy95@chat.facebook.com"
-	 (:network-server . "chat.facebook.com")
-	 (:connection-type . network))
-	("brianlevy95@gmail.com"
-	 (:network-server . "talk.google.com")
-	 (:connection-type . ssl))))
-
-
-;;Twitter
-(add-to-list 'load-path "~/.emacs.d/twittering-mode")
-(require 'twittering-mode)
-
-;;Gnus
-(setq gnus-select-method '(nnimap "gmail"
-				  (nnimap-address "imap.gmail.com")
-				  (nnimap-server-port 993)
-				  (nnimap-stream ssl)))
-(setq message-send-mail-function 'smtpmail-send-it
-      smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
-      smtpmail-auth-credentials '(("smtp.gmail.com" 587 "brianlevy95@gmail.com" nil))
-      smtpmail-default-smtp-server "smtp.gmail.com"
-      smtpmail-smtp-server "smtp.gmail.com"
-      smtpmail-smtp-service 587)
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(inhibit-startup-screen t)
- '(safe-local-variable-values (quote ((Package . CL-PPCRE) (Base . 10) (Package . CL-USER) (Syntax . COMMON-LISP)))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(rainbow-delimiters-depth-1-face ((t (:foreground "#906083"))))
+ '(rainbow-delimiters-depth-2-face ((t (:foreground "#805030"))))
+ '(rainbow-delimiters-depth-3-face ((t (:foreground "#808040"))))
+ '(rainbow-delimiters-depth-4-face ((t (:foreground "#427023"))))
+ '(rainbow-delimiters-depth-5-face ((t (:foreground "#4050A0"))))
+ '(rainbow-delimiters-depth-6-face ((t (:foreground "#A05073"))))
+ '(rainbow-delimiters-depth-7-face ((t (:foreground "#707050")))))
 
 (put 'downcase-region 'disabled nil)
 
-;;auto-complete
-(add-to-list 'load-path "~/.emacs.d/elpa/popup-0.5")
-(add-to-list 'load-path "~/.emacs.d/elpa/auto-complete-1.4")
-(require 'auto-complete)
-(global-auto-complete-mode t)
-(define-key ac-complete-mode-map "\C-n" 'ac-next)
-(define-key ac-complete-mode-map "\C-p" 'ac-previous)
-(define-key ac-complete-mode-map "\t" 'ac-complete)
-(define-key ac-complete-mode-map "\r" nil)
+
+
+;;;multiple cursors
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+(global-set-key (kbd "s-SPC") 'set-rectangular-region-anchor)
+(put 'narrow-to-region 'disabled nil)
+
 (put 'dired-find-alternate-file 'disabled nil)
 
+(global-set-key (kbd "C-c C-w") 'fixup-whitespace)
+(eval-after-load "dired-aux"
+  '(add-to-list 'dired-compress-file-suffixes
+		'("\\.zip\\'" ".zip" "unzip")))
 
-;;emacs-eclim
-;; this is for eclipse interraction i broke it somehow w/e 
-;(require 'eclimd)
-;(global-eclim-mode)
-;(setq help-at-pt-display-when-idle t)
-;(setq help-at-pt-timer-delay 0.1)
-;(help-at-pt-set-timer)
-;; regular auto-complete initialization
-;; add the emacs-eclim source
-;(require 'ac-emacs-eclim-source)
-;(ac-emacs-eclim-config)
+;color theme
+(add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0")
+(require 'color-theme)
+(color-theme-initialize)
+(color-theme-charcoal-black)
 
-;;geiser
+;;; haskell
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+(add-to-list 'completion-ignored-extensions ".hi")
+
+
+;;; autocomplete mode
+(setq-default ac-sources '(ac-source-abbrev ac-source-dictionary ac-source-words-in-same-mode-buffers))
+;;; slime
+(add-hook 'slime-mode-hook 'set-up-slime-ac) ;will this break for clj?
+(add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+(eval-after-load "auto-complete"
+  '(add-to-list 'ac-modes 'slime-repl-mode))
+;;; clang
+(defun my-ac-cc-mode-setup ()
+  (auto-complete-mode 1)
+  (setq ac-sources (cons 'ac-source-clang ac-sources)))
+(eval-after-load "auto-complete"
+  '(add-hook 'c++-mode-hook 'my-ac-cc-mode-setup))
+
 (add-hook 'scheme-mode-hook 'standard-lisp-setup)
 (add-hook 'geiser-repl-mode-hook 'lisp-setup)
 
-;;powerline
-(add-hook 'before-make-frame-hook 'powerline-center-theme)
-
-;;haskell ass shit
-(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-
-;; hslint on the command line only likes this indentation mode;
-;; alternatives commented out below.
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-;;(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
-;;(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
-
-;; Ignore compiled Haskell files in filename completions
-(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-
-;; hslint on the command line only likes this indentation mode;
-;; alternatives commented out below.
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-;;(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
-;;(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
-
-;; Ignore compiled Haskell files in filename completions
-(add-to-list 'completion-ignored-extensions ".hi")
-
-(add-to-list 'after-init-hook (lambda () (require 'switch-window)))
+;;; info mode
+(defun info-mode ()
+  (interactive)
+  (let ((file-name (buffer-file-name)))
+    (kill-buffer (current-buffer))
+    (info file-name)))
+(add-to-list 'auto-mode-alist '("\\.info\\'" . info-mode))

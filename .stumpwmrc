@@ -2,6 +2,7 @@
 (swank:create-server)
 
 (ql:quickload 'trivial-shell)
+(ql:quickload 'cl-ppcre)
 
 (defcommand conkeror () ()
   "Start Conkeror unless it is already running, in which case focus it."
@@ -11,9 +12,11 @@
   "Open an instance of emacs client "
   (run-or-raise "emacsclient -a \"\" -c" '(:class "Emacs")))
 
+
 (define-key *root-map* (kbd "C-c") "exec xfce4-terminal")
 (define-key *root-map* (kbd "c") "conkeror")
 (define-key *root-map* (kbd "e") "emacsclient")
+(define-key *root-map* (kbd "m") "mode-line")
 
 (defcommand battery () ()
   (message 
@@ -27,9 +30,25 @@
 	 ,truefm
 	 ,falsefm)))
 
-(defvar *background-image-path* "~/Pictures/spencerisawesome.jpg") ;;; it's true 
+(defvar *background-image-path* "~/background.png") 
 (defun display-background ()
   (aif *background-image-path*
-      (run-shell-command (concatenate 'string "display -backdrop -window root "
+      (run-shell-command (concatenate 'string "display -window root "
 				      it))))
 (display-background)
+
+(defun show-time ()
+  (let ((time (multiple-value-list (get-decoded-time))))
+    (format nil "~2,'0d:~2,'0d "
+	    (third time)
+	    (second time))))
+
+(setf stumpwm:*screen-mode-line-format*
+      (list "[^B%n^b] %W | "
+	    '(:eval (show-time))
+	    " | "
+	    '(:eval (cl-ppcre:regex-replace-all "[\\s]"
+		     (run-shell-command "acpi | cut -d, -f2") ""))))
+
+(dolist (head (stumpwm::screen-heads (stumpwm:current-screen)))
+  (stumpwm:enable-mode-line (stumpwm:current-screen) head t))
