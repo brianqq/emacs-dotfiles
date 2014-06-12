@@ -44,6 +44,16 @@
  '(inhibit-startup-screen t)
  '(safe-local-variable-values (quote ((Package . CL-PPCRE) (Base . 10) (Package . CL-USER) (Syntax . COMMON-LISP)))))
 
+<<<<<<< HEAD
+=======
+
+
+;color theme
+(add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0")
+(require 'color-theme)
+(color-theme-initialize)
+(color-theme-charcoal-black)
+>>>>>>> 4b144680d95eaf5fa6a7f4ad804fd7ce90019599
 
 ;;auctex
 (setq TeX-auto-save t)
@@ -65,6 +75,7 @@
 (add-hook 'clojure-mode-hook #'lisp-setup)
 
 ;;lisp
+<<<<<<< HEAD
 (require 'slime)
 (setq slime-lisp-implementations
       '((sbcl ("sbcl") :coding-system utf-8-unix)
@@ -80,6 +91,33 @@
 (add-hook 'slime-repl-mode-hook #'override-slime-repl-bindings-with-paredit)
 
 (add-hook 'emacs-lisp-mode-hook 'standard-lisp-setup)
+=======
+(defun slimify ()
+  (interactive)
+  (require 'slime)
+  (setq slime-lisp-implementations
+	'((sbcl ("sbcl") :coding-system utf-8-unix)
+	  (ccl ("ccl64"))
+	  (ecl ("ecl"))
+	  (abcl ("abcl"))))
+  (slime-setup '(slime-fancy))
+  (setq common-lisp-hyperspec-root "file:///usr/share/doc/HyperSpec/"
+	slime-complete-symbol-function 'slime-fuzzy-complete-symbol)
+  (add-hook 'slime-mode-hook #'standard-lisp-setup)
+  (add-hook 'slime-repl-mode-hook #'lisp-setup)
+  (add-hook 'slime-repl-mode-hook #'override-slime-repl-bindings-with-paredit))
+
+(add-hook 'emacs-lisp-mode-hook 'standard-lisp-setup)
+
+
+;maxima
+(add-to-list 'load-path "/usr/share/maxima/5.28.0/emacs/")
+(autoload 'maxima-mode "maxima" "Maxima mode" t)
+(autoload 'imaxima "imaxima" "Frontend for maxima with Image support" t)
+(autoload 'maxima "maxima" "Maxima interaction" t)
+(autoload 'imath-mode "imath" "Imath mode for math formula input" t)
+(setq imaxima-use-maxima-mode-flag t)
+>>>>>>> 4b144680d95eaf5fa6a7f4ad804fd7ce90019599
 
 ;;Org Mode
 (require 'org-install)
@@ -140,6 +178,7 @@
 
 
 
+<<<<<<< HEAD
 ;;;multiple cursors
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
@@ -192,3 +231,46 @@
     (kill-buffer (current-buffer))
     (info file-name)))
 (add-to-list 'auto-mode-alist '("\\.info\\'" . info-mode))
+=======
+;;emacs-eclim
+;; this is for eclipse interraction i broke it somehow w/e 
+;(require 'eclimd)
+;(global-eclim-mode)
+;(setq help-at-pt-display-when-idle t)
+;(setq help-at-pt-timer-delay 0.1)
+;(help-at-pt-set-timer)
+;; regular auto-complete initialization
+;; add the emacs-eclim source
+;(require 'ac-emacs-eclim-source)
+;(ac-emacs-eclim-config)
+
+;;geiser
+(add-hook 'scheme-mode-hook 'standard-lisp-setup)
+(add-hook 'geiser-repl-mode-hook 'lisp-setup)
+
+;;powerline
+(add-hook 'before-make-frame-hook 'powerline-center-theme)
+
+;;haskell ass shit
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+
+;; hslint on the command line only likes this indentation mode;
+;; alternatives commented out below.
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+;;(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+;;(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
+
+;; Ignore compiled Haskell files in filename completions
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+
+;; hslint on the command line only likes this indentation mode;
+;; alternatives commented out below.
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+;;(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+;;(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
+
+;; Ignore compiled Haskell files in filename completions
+(add-to-list 'completion-ignored-extensions ".hi")
+
+(add-to-list 'after-init-hook (lambda () (require 'switch-window)))
+>>>>>>> 4b144680d95eaf5fa6a7f4ad804fd7ce90019599
