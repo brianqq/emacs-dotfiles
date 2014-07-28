@@ -48,7 +48,9 @@
 	    '(:eval (show-time))
 	    " | "
 	    '(:eval (cl-ppcre:regex-replace-all "[\\s]"
-		     (run-shell-command "acpi | cut -d, -f2") ""))))
+		     (trivial-shell:shell-command "acpi | cut -d, -f2") ""))))
 
 (dolist (head (stumpwm::screen-heads (stumpwm:current-screen)))
   (stumpwm:enable-mode-line (stumpwm:current-screen) head t))
+
+(trivial-shell:shell-command "sh kbinit.sh")

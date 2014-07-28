@@ -2,8 +2,11 @@
 
 (require 'cl)
 
-(add-to-list 'default-frame-alist '(font . "Inconsolata-11"))
+(add-to-list 'default-frame-alist '(font . "Inconsolata-11")
+	     '(variable-pitch ((t (:family "Inconsolata-11" :slant normal :weight regular :height 98 )))))
 
+;;; hippie expand
+(global-set-key "\M- " 'hippie-expand)
 
 (global-font-lock-mode 1) 
 (show-paren-mode 1)
@@ -44,16 +47,6 @@
  '(inhibit-startup-screen t)
  '(safe-local-variable-values (quote ((Package . CL-PPCRE) (Base . 10) (Package . CL-USER) (Syntax . COMMON-LISP)))))
 
-<<<<<<< HEAD
-=======
-
-
-;color theme
-(add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0")
-(require 'color-theme)
-(color-theme-initialize)
-(color-theme-charcoal-black)
->>>>>>> 4b144680d95eaf5fa6a7f4ad804fd7ce90019599
 
 ;;auctex
 (setq TeX-auto-save t)
@@ -70,54 +63,27 @@
     (read-kbd-macro paredit-backward-delete-key) nil))
 
 (defun standard-lisp-setup ()
-  (lisp-setup) (pretty-lambda-mode) (paredit-mode 1))
+  (lisp-setup) (pretty-lambda-mode))
 
 (add-hook 'clojure-mode-hook #'lisp-setup)
 
 ;;lisp
-<<<<<<< HEAD
 (require 'slime)
 (setq slime-lisp-implementations
       '((sbcl ("sbcl") :coding-system utf-8-unix)
 	(sbcl-build ("~/sbcl/run-sbcl.sh") :coding-system utf-8-unix)
 	(ccl ("ccl64"))
 	(ecl ("ecl"))
+	(clisp ("clisp"))
 	(abcl ("abcl"))))
 (slime-setup '(slime-fancy))
-(setq common-lisp-hyperspec-root "file:///usr/share/doc/HyperSpec/"
+(setq ;; common-lisp-hyperspec-root "file:///usr/share/doc/HyperSpec/"
       slime-complete-symbol-function 'slime-fuzzy-complete-symbol)
 (add-hook 'slime-mode-hook #'standard-lisp-setup)
 (add-hook 'slime-repl-mode-hook #'lisp-setup)
 (add-hook 'slime-repl-mode-hook #'override-slime-repl-bindings-with-paredit)
 
 (add-hook 'emacs-lisp-mode-hook 'standard-lisp-setup)
-=======
-(defun slimify ()
-  (interactive)
-  (require 'slime)
-  (setq slime-lisp-implementations
-	'((sbcl ("sbcl") :coding-system utf-8-unix)
-	  (ccl ("ccl64"))
-	  (ecl ("ecl"))
-	  (abcl ("abcl"))))
-  (slime-setup '(slime-fancy))
-  (setq common-lisp-hyperspec-root "file:///usr/share/doc/HyperSpec/"
-	slime-complete-symbol-function 'slime-fuzzy-complete-symbol)
-  (add-hook 'slime-mode-hook #'standard-lisp-setup)
-  (add-hook 'slime-repl-mode-hook #'lisp-setup)
-  (add-hook 'slime-repl-mode-hook #'override-slime-repl-bindings-with-paredit))
-
-(add-hook 'emacs-lisp-mode-hook 'standard-lisp-setup)
-
-
-;maxima
-(add-to-list 'load-path "/usr/share/maxima/5.28.0/emacs/")
-(autoload 'maxima-mode "maxima" "Maxima mode" t)
-(autoload 'imaxima "imaxima" "Frontend for maxima with Image support" t)
-(autoload 'maxima "maxima" "Maxima interaction" t)
-(autoload 'imath-mode "imath" "Imath mode for math formula input" t)
-(setq imaxima-use-maxima-mode-flag t)
->>>>>>> 4b144680d95eaf5fa6a7f4ad804fd7ce90019599
 
 ;;Org Mode
 (require 'org-install)
@@ -178,7 +144,6 @@
 
 
 
-<<<<<<< HEAD
 ;;;multiple cursors
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
@@ -231,46 +196,33 @@
     (kill-buffer (current-buffer))
     (info file-name)))
 (add-to-list 'auto-mode-alist '("\\.info\\'" . info-mode))
-=======
-;;emacs-eclim
-;; this is for eclipse interraction i broke it somehow w/e 
-;(require 'eclimd)
-;(global-eclim-mode)
-;(setq help-at-pt-display-when-idle t)
-;(setq help-at-pt-timer-delay 0.1)
-;(help-at-pt-set-timer)
-;; regular auto-complete initialization
-;; add the emacs-eclim source
-;(require 'ac-emacs-eclim-source)
-;(ac-emacs-eclim-config)
 
-;;geiser
-(add-hook 'scheme-mode-hook 'standard-lisp-setup)
-(add-hook 'geiser-repl-mode-hook 'lisp-setup)
+;;; jabber otr
+(load-file "~/emacs-jabber-otr/jabber-otr.el")
 
-;;powerline
-(add-hook 'before-make-frame-hook 'powerline-center-theme)
+;;; evil-mode
+(eval-after-load "evil"
+  '(progn
+     (define-key evil-motion-state-map "h" 'evil-next-line)   ;j 
+     (define-key evil-motion-state-map "t" 'evil-previous-line) ;k 
+     (define-key evil-motion-state-map "n" 'evil-forward-char)  ;l
+     (define-key evil-motion-state-map "d" 'evil-backward-char) ;h
+     (define-key evil-normal-state-map "d" nil) ;d was bound to delete mode
+     (define-key evil-normal-state-map "k" 'evil-delete)
+     (my-move-key evil-motion-state-map evil-normal-state-map (kbd "RET"))
+     (my-move-key evil-motion-state-map evil-normal-state-map " ")
+     (my-move-key evil-motion-state-map evil-normal-state-map (kbd "<tab>"))
+     (evil-mode 1)))
 
-;;haskell ass shit
-(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+(defun my-move-key (keymap-from keymap-to key)
+  "Moves key binding from one keymap to another, deleting from the old location. "
+  (define-key keymap-to key (lookup-key keymap-from key))
+  (define-key keymap-from key nil))
 
-;; hslint on the command line only likes this indentation mode;
-;; alternatives commented out below.
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-;;(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
-;;(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
+(eval-after-load "evil-paredit"
+  '(progn
+     (define-key evil-paredit-mode-map "d" nil)))
 
-;; Ignore compiled Haskell files in filename completions
-(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-
-;; hslint on the command line only likes this indentation mode;
-;; alternatives commented out below.
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-;;(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
-;;(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
-
-;; Ignore compiled Haskell files in filename completions
-(add-to-list 'completion-ignored-extensions ".hi")
-
-(add-to-list 'after-init-hook (lambda () (require 'switch-window)))
->>>>>>> 4b144680d95eaf5fa6a7f4ad804fd7ce90019599
+(defun after-all-loads ()
+  (powerline-evil-center-color-theme))
+(add-hook 'after-init-hook 'after-all-loads)
