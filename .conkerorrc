@@ -1,0 +1,11 @@
+define_key(content_buffer_normal_keymap, "C-u f", "follow-new-window");
+define_key(content_buffer_normal_keymap, "C-x C-f", "find-url-new-window");
+remove_hook("download_added_hook",open_download_buffer_automatically);
+
+// for netflix
+// http://useragentstring.com/Firefox25.0_id_19716.php
+// require("user-agent-policy");
+// user_agent_policy.define_policy("netflix", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:25.0) Gecko/20100101 Firefox/25.0" // user agent string
+// 				"netflix.com")
+
+require("adblockplus");
