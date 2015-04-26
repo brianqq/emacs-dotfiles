@@ -9,3 +9,5 @@ remove_hook("download_added_hook",open_download_buffer_automatically);
 // 				"netflix.com")
 
 require("adblockplus");
+
+define_webjump("archwiki","https://wiki.archlinux.org/");

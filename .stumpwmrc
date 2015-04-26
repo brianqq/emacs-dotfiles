@@ -1,22 +1,25 @@
-(require 'swank)
+(ql:quickload 'swank)
 (swank:create-server)
-
+(ql:quickload 'iterate)
 (ql:quickload 'trivial-shell)
+(ql:quickload 'inferior-shell)
 (ql:quickload 'cl-ppcre)
+(ql:quickload 'bordeaux-threads)
 
-(defcommand conkeror () ()
-  "Start Conkeror unless it is already running, in which case focus it."
-  (run-or-raise "conkeror" '(:class "Conkeror")))
+;; (defcommand conkeror () ()
+;;   "Start Conkeror unless it is already running, in which case focus it."
+;;   (run-or-raise "conkeror" '(:class "Conkeror")))
+;;; I don't want to raise, just run
 
 (defcommand emacsclient () ()
   "Open an instance of emacs client "
   (run-or-raise "emacsclient -a \"\" -c" '(:class "Emacs")))
 
-
-(define-key *root-map* (kbd "C-c") "exec xfce4-terminal")
-(define-key *root-map* (kbd "c") "conkeror")
+(define-key *root-map* (kbd "C-c") "exec urxvt")
+(define-key *root-map* (kbd "c") "exec conkeror")
 (define-key *root-map* (kbd "e") "emacsclient")
 (define-key *root-map* (kbd "m") "mode-line")
+(define-key *groups-map* (kbd "g") "vgroups")
 
 (defcommand battery () ()
   (message 
@@ -30,7 +33,7 @@
 	 ,truefm
 	 ,falsefm)))
 
-(defvar *background-image-path* "~/background.png") 
+(defparameter *background-image-path* "~/background2.png") 
 (defun display-background ()
   (aif *background-image-path*
       (run-shell-command (concatenate 'string "display -window root "
@@ -44,13 +47,48 @@
 	    (second time))))
 
 (setf stumpwm:*screen-mode-line-format*
-      (list "[^B%n^b] %W | "
+      (list "[^B%n^b] "  
 	    '(:eval (show-time))
 	    " | "
 	    '(:eval (cl-ppcre:regex-replace-all "[\\s]"
-		     (trivial-shell:shell-command "acpi | cut -d, -f2") ""))))
+		     (trivial-shell:shell-command "acpi | cut -d, -f2") ""))
+	    " | "
+	    "%W"))
 
 (dolist (head (stumpwm::screen-heads (stumpwm:current-screen)))
   (stumpwm:enable-mode-line (stumpwm:current-screen) head t))
 
-(trivial-shell:shell-command "sh kbinit.sh")
+;;; now it's hardcoded to be my tablet
+(defun get-wacom ()
+  (list "Wacom Intuos PT S Pad pad" "Wacom Intuos PT S Finger touch" "Wacom Intuos PT S Pen stylus" "Wacom Intuos PT S Pen eraser"))
+
+(defun get-head-names ()
+  (cl-ppcre:all-matches-as-strings "[0-9a-zA-Z\\-]+"
+   (trivial-shell:shell-command "xrandr -q | grep -iv disc | grep -i connected | awk '{print $1;}'")))
+
+(defun switch-wacom-head-str (screen)
+  (declare (optimize (speed 3)))
+  (reduce (lambda (x y) (concatenate 'string x y))
+   (mapcar (lambda (dev)
+	     (format nil "xsetwacom --set '~a' MapToOutput ~a~%" dev screen))
+	   (get-wacom))))
+
+(defun switch-wacom-head (screen)
+  (inferior-shell:run (switch-wacom-head-str screen)))
+(defun switch-wacom-head-thread (screen)
+  (bordeaux-threads:make-thread (lambda () (switch-wacom-head screen))))
+;; (defcommand switch-wacom () ()
+;;     (switch-wacom-screen
+;;      (select-from-menu (current-screen) (get-head-names))))
+
+(defun head-no (head)
+  (position head (stumpwm::screen-heads (stumpwm:current-screen)) :test #'equal))
+
+(defun wacom-current-head (x y)
+  (declare (ignore x y))
+  (switch-wacom-head-thread (nth (head-no (stumpwm::current-head)) (get-head-names))))
+
+(add-hook stumpwm:*focus-frame-hook* 'wacom-current-head)
+
+;(define-key *root-map* (kbd "d") "switch-wacom")
+

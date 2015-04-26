@@ -2,8 +2,8 @@
 
 (require 'cl)
 
-(add-to-list 'default-frame-alist '(font . "Inconsolata-11")
-	     '(variable-pitch ((t (:family "Inconsolata-11" :slant normal :weight regular :height 98 )))))
+(add-to-list 'default-frame-alist '(font . "Inconsolatazi4-11")
+	     '(variable-pitch ((t (:family "Inconsolatazi4-11" :slant normal :weight regular :height 98 )))))
 
 ;;; hippie expand
 (global-set-key "\M- " 'hippie-expand)
@@ -41,14 +41,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(TeX-command-list (quote (("TeX" "%(PDF)%(tex) %`%S%(PDFout)%(mode)%' %t" TeX-run-TeX nil (plain-tex-mode texinfo-mode ams-tex-mode) :help "Run plain TeX") ("LaTeX" "%`%l%(mode)%' %t" TeX-run-TeX nil (latex-mode doctex-mode) :help "Run LaTeX") ("Makeinfo" "makeinfo %t" TeX-run-compile nil (texinfo-mode) :help "Run Makeinfo with Info output") ("Makeinfo HTML" "makeinfo --html %t" TeX-run-compile nil (texinfo-mode) :help "Run Makeinfo with HTML output") ("AmSTeX" "%(PDF)amstex %`%S%(PDFout)%(mode)%' %t" TeX-run-TeX nil (ams-tex-mode) :help "Run AMSTeX") ("ConTeXt" "texexec --once --texutil %(execopts)%t" TeX-run-TeX nil (context-mode) :help "Run ConTeXt once") ("ConTeXt Full" "texexec %(execopts)%t" TeX-run-TeX nil (context-mode) :help "Run ConTeXt until completion") ("BibTeX" "bibtex %s" TeX-run-BibTeX nil t :help "Run BibTeX") ("Biber" "biber %s" TeX-run-Biber nil t :help "Run Biber") ("View" "%V" TeX-run-discard-or-function t t :help "Run Viewer") ("Print" "%p" TeX-run-command t t :help "Print the file") ("Queue" "%q" TeX-run-background nil t :help "View the printer queue" :visible TeX-queue-command) ("File" "%(o?)dvips %d -o %f " TeX-run-command t t :help "Generate PostScript file") ("Index" "makeindex %s" TeX-run-command nil t :help "Create index file") ("Check" "lacheck %s" TeX-run-compile nil (latex-mode) :help "Check LaTeX file for correctness") ("Spell" "(TeX-ispell-document \"\")" TeX-run-function nil t :help "Spell-check the document") ("Clean" "TeX-clean" TeX-run-function nil t :help "Delete generated intermediate files") ("Clean All" "(TeX-clean t)" TeX-run-function nil t :help "Delete generated intermediate and output files") ("Other" "" TeX-run-command t t :help "Run an arbitrary command") ("latexmk" "latexmk %l -pdf " TeX-run-command nil t))))
- '(fuel-listener-factor-binary "/usr/lib/factor/factor")
- '(fuel-listener-factor-image "/usr/lib/factor/factor.image")
- '(inhibit-startup-screen t)
- '(safe-local-variable-values (quote ((Package . CL-PPCRE) (Base . 10) (Package . CL-USER) (Syntax . COMMON-LISP)))))
-
+ '(custom-safe-themes (quote ("146d24de1bb61ddfa64062c29b5ff57065552a7c4019bee5d869e938782dfc2a" default)))
+ '(proof-prog-name-ask t))
 
 ;;auctex
+(setq-default TeX-master nil)
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
 
@@ -57,7 +54,6 @@
   (paredit-mode 1)
   (rainbow-delimiters-mode 1))
 
-
 (defun override-slime-repl-bindings-with-paredit ()
   (define-key slime-repl-mode-map
     (read-kbd-macro paredit-backward-delete-key) nil))
@@ -65,9 +61,8 @@
 (defun standard-lisp-setup ()
   (lisp-setup) (pretty-lambda-mode))
 
-(add-hook 'clojure-mode-hook #'lisp-setup)
 
-;;lisp
+;; ;;lisp
 (require 'slime)
 (setq slime-lisp-implementations
       '((sbcl ("sbcl") :coding-system utf-8-unix)
@@ -99,6 +94,7 @@
 (setq org-default-notes-file (concat org-directory "/notes.org"))
 (define-key global-map "\C-cc" 'org-capture)
 (setq org-src-fontify-natively t)
+;;; org latex
 (unless (boundp 'org-export-latex-classes)
   (setq org-export-latex-classes nil))
 (add-to-list 'org-export-latex-classes
@@ -115,34 +111,25 @@
 (setq org-todo-keyword-faces
       '(("STARTED" . "yellow")
 	("CANCELED" . (:foreground "blue" :weight bold))))
-(setq org-export-latex-listings 'minted)
+
 (unless (boundp 'org-export-latex-packages-alist)
   (setq org-export-latex-packages-alist nil))
+(add-hook 'org-mode-hook (lambda ()
+			   (require 'ob-latex)
+			   (require 'ox-latex)))
+;;minted
 (add-to-list 'org-export-latex-packages-alist '("" "minted"))
-(add-hook 'org-mode-hook (lambda () (require 'ob-latex)))
+(setq org-export-latex-listings 'minted)
+(setq org-latex-minted-options
+      '(("frame" "lines")
+	("linenos=true")))
 ;;;open pdfs with evince
 (eval-after-load "org"
   '(progn
      ;; Change .pdf association directly within the alist
      (setcdr (assoc "\\.pdf\\'" org-file-apps) "evince %s")))
 
-
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(rainbow-delimiters-depth-1-face ((t (:foreground "#906083"))))
- '(rainbow-delimiters-depth-2-face ((t (:foreground "#805030"))))
- '(rainbow-delimiters-depth-3-face ((t (:foreground "#808040"))))
- '(rainbow-delimiters-depth-4-face ((t (:foreground "#427023"))))
- '(rainbow-delimiters-depth-5-face ((t (:foreground "#4050A0"))))
- '(rainbow-delimiters-depth-6-face ((t (:foreground "#A05073"))))
- '(rainbow-delimiters-depth-7-face ((t (:foreground "#707050")))))
-
 (put 'downcase-region 'disabled nil)
-
-
 
 ;;;multiple cursors
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
@@ -159,12 +146,6 @@
   '(add-to-list 'dired-compress-file-suffixes
 		'("\\.zip\\'" ".zip" "unzip")))
 
-;color theme
-(add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0")
-(require 'color-theme)
-(color-theme-initialize)
-(color-theme-charcoal-black)
-
 ;;; haskell
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
@@ -174,11 +155,19 @@
 
 ;;; autocomplete mode
 (setq-default ac-sources '(ac-source-abbrev ac-source-dictionary ac-source-words-in-same-mode-buffers))
-;;; slime
-(add-hook 'slime-mode-hook 'set-up-slime-ac) ;will this break for clj?
-(add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+;;; slime/autocomplete 
+(add-hook 'slime-mode-hook 'auto-complete-mode)
+;(add-hook 'slime-mode-hook 'set-up-slime-ac)
+;(add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+
+
 (eval-after-load "auto-complete"
-  '(add-to-list 'ac-modes 'slime-repl-mode))
+  '(progn
+     (require 'auto-complete-config)
+     (ac-config-default)
+     (ac-set-trigger-key "TAB")
+     (ac-set-trigger-key "<tab>")
+     (add-to-list 'ac-modes 'slime-repl-mode)))
 ;;; clang
 (defun my-ac-cc-mode-setup ()
   (auto-complete-mode 1)
@@ -198,7 +187,12 @@
 (add-to-list 'auto-mode-alist '("\\.info\\'" . info-mode))
 
 ;;; jabber otr
-(load-file "~/emacs-jabber-otr/jabber-otr.el")
+;; (load-file "~/emacs-jabber-otr/jabber-otr.el")
+
+(defun my-move-key (keymap-from keymap-to key)
+  "Moves key binding from one keymap to another, deleting from the old location. "
+  (define-key keymap-to key (lookup-key keymap-from key))
+  (define-key keymap-from key nil))
 
 ;;; evil-mode
 (eval-after-load "evil"
@@ -214,15 +208,36 @@
      (my-move-key evil-motion-state-map evil-normal-state-map (kbd "<tab>"))
      (evil-mode 1)))
 
-(defun my-move-key (keymap-from keymap-to key)
-  "Moves key binding from one keymap to another, deleting from the old location. "
-  (define-key keymap-to key (lookup-key keymap-from key))
-  (define-key keymap-from key nil))
-
 (eval-after-load "evil-paredit"
   '(progn
      (define-key evil-paredit-mode-map "d" nil)))
 
 (defun after-all-loads ()
-  (powerline-evil-center-color-theme))
+  (powerline-evil-center-color-theme)
+  (load-theme 'zenburn t)
+  (global-auto-complete-mode 1))
+
+
 (add-hook 'after-init-hook 'after-all-loads)
+
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(rainbow-delimiters-depth-1-face ((t (:foreground "#906083"))))
+ '(rainbow-delimiters-depth-2-face ((t (:foreground "#805030"))))
+ '(rainbow-delimiters-depth-3-face ((t (:foreground "#808040"))))
+ '(rainbow-delimiters-depth-4-face ((t (:foreground "#427023"))))
+ '(rainbow-delimiters-depth-5-face ((t (:foreground "#4050A0"))))
+ '(rainbow-delimiters-depth-6-face ((t (:foreground "#A05073"))))
+ '(rainbow-delimiters-depth-7-face ((t (:foreground "#707050")))))
+
+
+(load-file "/usr/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
+
+;;; w3m
+(setq browse-url-browser-function 'w3m-goto-url)
+(setq w3m-user-agent "Mozilla/5.0 (Linux; U; Android 2.3.3")
+(autoload 'w3m-browse-url "w3m" "WWW browser to show url" t)
+(global-set-key "\C-xm" 'w3m-goto-url)
